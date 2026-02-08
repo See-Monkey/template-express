@@ -1,0 +1,29 @@
+{
+	"name": "template-express",
+	"version": "1.0.0",
+	"type": "module",
+	"description": "Express EJS PostgreSQL Passport",
+	"main": "app.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"dev": "NODE_ENV=development node --watch app.js",
+		"start": "node app.js",
+		"seed": "node db/seed.js"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/See-Monkey/template-express.git"
+	},
+	"author": "",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/See-Monkey/template-express/issues"
+	},
+	"homepage": "https://github.com/See-Monkey/template-express#readme",
+	"dependencies": {
+		"ejs": "^4.0.1",
+		"express": "^5.2.1",
+		"express-validator": "^7.3.1",
+		"pg": "^8.18.0"
+	}
+}
