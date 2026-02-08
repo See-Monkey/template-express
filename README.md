@@ -1,2 +1,5 @@
-# template-express
-Express Template
+# express project
+Express
+EJS
+PostgreSQL
+Passport
