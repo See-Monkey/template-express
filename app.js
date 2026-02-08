@@ -10,6 +10,7 @@ import { fileURLToPath } from "node:url";
 import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
 import session from "express-session";
+import pgSession from "connect-pg-simple";
 import bcrypt from "bcryptjs";
 import pool from "./db/pool.js";
 import userRoutes from "./routes/userRoutes.js";
@@ -32,13 +33,24 @@ app.set("views", path.join(__dirname, "views"));
 app.use(express.urlencoded({ extended: true }));
 
 // setup passport sessions
+const PgSession = pgSession(session);
+
 app.use(
 	session({
+		store: new PgSession({
+			pool,
+			tableName: "session",
+			createTableIfMissing: true,
+		}),
 		secret: process.env.SESSION_SECRET,
 		resave: false,
 		saveUninitialized: false,
+		cookie: {
+			maxAge: 1000 * 60 * 60 * 24 * 30, // 30 days
+		},
 	}),
 );
+
 app.use(passport.initialize());
 app.use(passport.session());
 
