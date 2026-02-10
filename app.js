@@ -94,50 +94,32 @@ passport.deserializeUser(async (id, done) => {
 	}
 });
 
-// enable currentPath inside ejs
+// enable currentPath and user inside ejs
 app.use((req, res, next) => {
 	res.locals.currentPath = req.path;
+	res.locals.user = req.user;
 	next();
-});
-
-// passport login route
-app.post(
-	"/log-in",
-	passport.authenticate("local", {
-		successRedirect: "/",
-		failureRedirect: "/log-in",
-	}),
-);
-
-// passport logout route
-app.post("/log-out", (req, res, next) => {
-	req.logout((err) => {
-		if (err) return next(err);
-		res.redirect("/");
-	});
-});
-
-// hash stored password with bcrypt when submitting user
-app.post("/sign-up", async (req, res, next) => {
-	try {
-		const hashedPassword = await bcrypt.hash(req.body.password, 10);
-		await pool.query("INSERT INTO users (username, password) VALUES ($1, $2)", [
-			req.body.username,
-			hashedPassword,
-		]);
-		res.redirect("/");
-	} catch (error) {
-		console.error(error);
-		next(error);
-	}
 });
 
 // custom routers
 app.use("/", userRoutes);
 
 // 404 for no routes found
-app.use((req, res) => {
-	res.status(404).render("404");
+app.use((req, res, next) => {
+	res.status(404).render("error", {
+		status: 404,
+		message:
+			"We're sorry, there must be some mistake. The content you're looking for no longer exists or has been moved.",
+	});
+});
+
+// catch middleware errors
+app.use((err, req, res, next) => {
+	console.error(err);
+	res.status(500).render("error", {
+		status: 500,
+		message: "Something went wrong",
+	});
 });
 
 // server
