@@ -1,19 +1,14 @@
-import { loadEnvFile } from "node:process";
-
-if (process.env.NODE_ENV !== "production") {
-	loadEnvFile();
-}
-
+import "dotenv/config";
 import express from "express";
 import path from "path";
 import { fileURLToPath } from "node:url";
 import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
 import session from "express-session";
-import pgSession from "connect-pg-simple";
-import bcrypt from "bcryptjs";
-import pool from "./db/pool.js";
+import { prisma } from "./config/prisma.js";
+import { PrismaSessionStore } from "@quixo3/prisma-session-store";
 import userRoutes from "./routes/userRoutes.js";
+import userModel from "./models/userModel.js";
 
 const app = express();
 
@@ -33,14 +28,11 @@ app.set("views", path.join(__dirname, "views"));
 app.use(express.urlencoded({ extended: true }));
 
 // setup passport sessions
-const PgSession = pgSession(session);
-
 app.use(
 	session({
-		store: new PgSession({
-			pool,
-			tableName: "session",
-			createTableIfMissing: true,
+		store: new PrismaSessionStore(prisma, {
+			checkPeriod: 2 * 60 * 1000, // delete expired sessions every 2 min
+			dbRecordIdIsSessionId: true,
 		}),
 		secret: process.env.SESSION_SECRET,
 		resave: false,
@@ -58,39 +50,38 @@ app.use(passport.session());
 passport.use(
 	new LocalStrategy(async (username, password, done) => {
 		try {
-			const { rows } = await pool.query(
-				"SELECT * FROM users WHERE username = $1",
-				[username],
-			);
-			const user = rows[0];
+			const user = await userModel.findByUsername(username);
 
 			if (!user) {
 				return done(null, false, { message: "Incorrect username" });
 			}
 
-			const match = await bcrypt.compare(password, user.password);
-			if (!match) {
-				// passwords do not match!
+			const valid = await userModel.validatePassword(user, password);
+			if (!valid) {
 				return done(null, false, { message: "Incorrect password" });
 			}
 
-			return done(null, user);
+			return done(null, userModel.sanitizeUser(user));
 		} catch (err) {
 			return done(err);
 		}
 	}),
 );
+
 passport.serializeUser((user, done) => {
 	done(null, user.id);
 });
 passport.deserializeUser(async (id, done) => {
 	try {
-		const { rows } = await pool.query("SELECT * FROM users WHERE id = $1", [
-			id,
-		]);
-		done(null, rows[0]);
+		const user = await userModel.findById(id);
+
+		if (!user) {
+			return done(null, false);
+		}
+
+		return done(null, userModel.sanitizeUser(user));
 	} catch (err) {
-		done(err);
+		return done(err);
 	}
 });
 

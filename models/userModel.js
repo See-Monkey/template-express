@@ -1,36 +1,59 @@
 import bcrypt from "bcryptjs";
-import pool from "../db/pool.js";
+import { prisma } from "../config/prisma.js";
 
+// Create a new user
 async function createUser({
 	username,
 	password,
 	firstname,
 	lastname,
-	role_id,
-	avatar_url,
+	role = "USER",
+	avatarUrl,
 }) {
 	const hashedPassword = await bcrypt.hash(password, 10);
 
-	const query = `
-    INSERT INTO users
-      (username, password, firstname, lastname, role_id, avatar_url)
-    VALUES ($1, $2, $3, $4, $5, $6)
-    RETURNING *
-  `;
+	return prisma.user.create({
+		data: {
+			username,
+			password: hashedPassword,
+			firstname,
+			lastname,
+			role,
+			avatarUrl,
+		},
+	});
+}
 
-	const values = [
-		username,
-		hashedPassword,
-		firstname,
-		lastname,
-		role_id,
-		avatar_url,
-	];
+// Find user by username
+async function findByUsername(username) {
+	return prisma.user.findUnique({
+		where: { username },
+	});
+}
 
-	const { rows } = await pool.query(query, values);
-	return rows[0];
+// Find user by id
+async function findById(id) {
+	return prisma.user.findUnique({
+		where: { id },
+	});
+}
+
+// Validate user password
+async function validatePassword(user, password) {
+	return bcrypt.compare(password, user.password);
+}
+
+// Remove password field before returning user
+function sanitizeUser(user) {
+	if (!user) return null;
+	const { password, ...safeUser } = user;
+	return safeUser;
 }
 
 export default {
 	createUser,
+	findByUsername,
+	findById,
+	validatePassword,
+	sanitizeUser,
 };
