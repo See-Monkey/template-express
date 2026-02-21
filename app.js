@@ -23,7 +23,8 @@ app.use(express.static(assetsPath));
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
-// put form submissions into objects on req.body
+// parse JSON and form data into req.body
+app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // setup passport sessions
