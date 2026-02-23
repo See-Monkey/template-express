@@ -1,23 +1,23 @@
 import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
-import userModel from "../models/userModel.js";
+import userService from "../services/userService.js";
 
 export function configurePassport() {
 	passport.use(
 		new LocalStrategy(async (username, password, done) => {
 			try {
-				const user = await userModel.findByUsername(username);
+				const user = await userService.findByUsername(username);
 
 				if (!user) {
 					return done(null, false, { message: "Incorrect username" });
 				}
 
-				const valid = await userModel.validatePassword(user, password);
+				const valid = await userService.validatePassword(user, password);
 				if (!valid) {
 					return done(null, false, { message: "Incorrect password" });
 				}
 
-				return done(null, userModel.sanitizeUser(user));
+				return done(null, userService.sanitizeUser(user));
 			} catch (err) {
 				return done(err);
 			}
@@ -30,13 +30,13 @@ export function configurePassport() {
 
 	passport.deserializeUser(async (id, done) => {
 		try {
-			const user = await userModel.findById(id);
+			const user = await userService.findById(id);
 
 			if (!user) {
 				return done(null, false);
 			}
 
-			return done(null, userModel.sanitizeUser(user));
+			return done(null, userService.sanitizeUser(user));
 		} catch (err) {
 			return done(err);
 		}

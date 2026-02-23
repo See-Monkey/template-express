@@ -1,4 +1,4 @@
-import userModel from "../models/userModel.js";
+import userService from "../services/userService.js";
 
 async function getIndex(req, res) {
 	res.render("index");
@@ -8,7 +8,7 @@ async function register(req, res, next) {
 	try {
 		const { username, password, firstName, lastName, avatarURL } = req.body;
 
-		const user = await userModel.createUser({
+		const user = await userService.createUser({
 			username,
 			password: password,
 			firstname: firstName,

@@ -1,4 +1,4 @@
-# express project
+# Express EJS Project
 
 Express
 EJS
