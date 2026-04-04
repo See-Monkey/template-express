@@ -1,44 +1,51 @@
 {
-	"name": "template-express",
-	"version": "1.0.0",
-	"type": "module",
-	"description": "Express EJS PostgreSQL Passport Prisma",
-	"main": "app.js",
-	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1",
-		"dev": "NODE_ENV=development node --watch app.js",
-		"start": "NODE_ENV=production node app.js",
-		"seed": "node config/seed.js",
-		"prisma:generate": "prisma generate",
-		"prisma:migrate": "prisma migrate dev",
-		"prisma:deploy": "prisma migrate deploy"
-	},
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/See-Monkey/template-express.git"
-	},
-	"author": "",
-	"license": "ISC",
-	"bugs": {
-		"url": "https://github.com/See-Monkey/template-express/issues"
-	},
-	"homepage": "https://github.com/See-Monkey/template-express#readme",
-	"dependencies": {
-		"@prisma/adapter-pg": "^7.4.0",
-		"@prisma/client": "^7.4.0",
-		"@quixo3/prisma-session-store": "^3.1.19",
-		"bcryptjs": "^3.0.3",
-		"connect-pg-simple": "^10.0.0",
-		"dotenv": "^17.2.4",
-		"ejs": "^4.0.1",
-		"express": "^5.2.1",
-		"express-session": "^1.19.0",
-		"express-validator": "^7.3.1",
-		"passport": "^0.7.0",
-		"passport-local": "^1.0.0",
-		"pg": "^8.18.0"
-	},
-	"devDependencies": {
-		"prisma": "^7.4.0"
-	}
+  "name": "template-express",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Express EJS PostgreSQL Passport Prisma",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "NODE_ENV=development node --watch app.js",
+    "start": "NODE_ENV=production node app.js",
+    "seed": "node config/seed.js",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:deploy": "prisma migrate deploy",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/See-Monkey/template-express.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/See-Monkey/template-express/issues"
+  },
+  "homepage": "https://github.com/See-Monkey/template-express#readme",
+  "dependencies": {
+    "@prisma/adapter-pg": "^7.4.0",
+    "@prisma/client": "^7.4.0",
+    "@quixo3/prisma-session-store": "^3.1.19",
+    "bcryptjs": "^3.0.3",
+    "connect-pg-simple": "^10.0.0",
+    "dotenv": "^17.2.4",
+    "ejs": "^4.0.1",
+    "express": "^5.2.1",
+    "express-session": "^1.19.0",
+    "express-validator": "^7.3.1",
+    "passport": "^0.7.0",
+    "passport-local": "^1.0.0",
+    "pg": "^8.18.0"
+  },
+  "devDependencies": {
+    "eslint": "^10.2.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.5",
+    "prettier": "^3.8.1",
+    "prisma": "^7.4.0"
+  }
 }
